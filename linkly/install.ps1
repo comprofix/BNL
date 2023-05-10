@@ -255,9 +255,10 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         "PEAK_TXN_Q"        = "1"
         "PEAK_TPS"          = "0" 
         "PEAK_TPM"          = "5" 
-        "PEAK_TPH"          = "14"PC_EFT
-        "PEAK_TPD" = "28"
+        "PEAK_TPH"          = "14"
+        "PEAK_TPD"          = "28"
     }
+
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }

@@ -475,7 +475,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
-    \
+    
     Start-Process -FilePath "$install_path\vc_redist.x86.exe" -ArgumentList "/install", "/passive", "/quiet", "/norestart"
     $null = New-NetFirewallRule -DisplayName "EFT-Server" -Direction Inbound -Program "$install_path\Eftsrv.exe" -Action Allow -Profile Any 
     Start-Process -FilePath "$install_path\Eftsrv.exe" -ArgumentList "install", "noecho"
@@ -501,4 +501,4 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         Copy-Item BCX\*.BCX C:\PC_EFT\
     }
 }
-Stop-Transcript C:\Windows\Logs\linkly-install.ps1
+Stop-Transcript

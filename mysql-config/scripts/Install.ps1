@@ -1,4 +1,4 @@
-Start-Transcript -Path C:\Windows\Log\mysql-config.log
+Start-Transcript -Path C:\Windows\Logs\mysql-configuration-install.log
 
 #Set your root password
 $ENV:rootpassword = 'V3r@$POS11'

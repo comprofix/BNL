@@ -1,7 +1,3 @@
-Set-ExecutionPolicy Unrestricted -Force
-$null = Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-$null = Install-Module -Name "PnP.PowerShell" -Force -Confirm:$false
-
 # Fill our connections informations
 $AppId = '130d7438-b3c0-4145-a4cd-b1868f290ef8'
 $AppSecret = '1OV8Q~5WarEh9B~lq86nrM8Wb3UljKrI-~qnybtx'
@@ -15,37 +11,32 @@ $Body = @{
     grant_type    = 'client_credentials'
 
 }
- 
- 
+
 # Call the OAUTH2 endpoint
 $tokenRequest = Invoke-RestMethod -Uri "https://login.microsoftonline.com/$TenantName/oauth2/v2.0/token" -Method Post -Body $Body
+$groupName = "IT Ops Campfire"
 
-$groupName = "BL POS Rollout"
- 
 # Create header for Authentication
- 
 $Header = @{
- 
     Authorization = "$($tokenRequest.token_type) $($tokenRequest.access_token)"
- 
 }
  
 # Build URI to find the Group
- 
 $Uri = "https://graph.microsoft.com/v1.0/groups?`$filter=displayName eq '$groupName'"
- 
 $GroupRequest = Invoke-RestMethod -Uri $Uri -Headers $Header -Method Get 
 
 # Get the SP Site ID
 $uri = "https://graph.microsoft.com/v1.0/groups/$($GroupRequest.value.id)/sites/root"
 $ListSites = Invoke-RestMethod -Uri $Uri -Headers $Header -Method Get
 
-#Get the file ID
-$teamsFilePath = "/General/00 Build Process/Linkley.csv"
-$uri = "https://graph.microsoft.com/v1.0/sites/$($ListSites.id)/drive/root:$teamsFilePath"
+#Get the List ID
+$listname = "Linkley Creds"
+$uri = "https://graph.microsoft.com/v1.0/sites/$($ListSites.id)/lists/$listname"
 $fileID = Invoke-RestMethod -Uri $Uri -Headers $Header -Method Get
 
-# Download the file
-$destinationFilePath = "Linkley.csv"
-$uri = "https://graph.microsoft.com/v1.0/sites/$($ListSites.id)/drive/items/$($fileID.id)/content"
-Invoke-RestMethod -Uri $Uri -Headers $Header -Method Get -OutFile $destinationFilePath
+#Get the List Data
+$listname = "Linkley Creds"
+$uri = "https://graph.microsoft.com/v1.0/sites/$($ListSites.id)/lists/$($fileID.id)?expand=columns,items(expand=fields)"
+$fileID = Invoke-RestMethod -Uri $Uri -Headers $Header -Method Get
+$data = $fileID.items.fields #| ConvertTo-Json | Out-File Lists.json
+#$data | where-object { $_.field_1 -eq "0026" }

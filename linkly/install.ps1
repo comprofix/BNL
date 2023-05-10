@@ -1,3 +1,5 @@
+Start-Transcript C:\Windows\Logs\linkly-install.Log
+
 $Hostname = $env:computername
 $position = $Hostname.Indexof("B")
 $StoreNumberPC = $Hostname.Substring($position + 1, 4)
@@ -40,7 +42,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\EVL"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
-        "FILENAME" = "C:\\PC_EFT\\EFTSRV.LOG"
+        "FILENAME" = "C:\PC_EFT\EFTSRV.LOG"
     }
     foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
@@ -239,7 +241,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "INETADDR"    = "ANY_IP"
-        "INSTALL_DIR" = "C:\\PC_EFT\\"
+        "INSTALL_DIR" = "C:\PC_EFT\"
         "PWORD"       = "******"
         "Ident"       = "EFTSRV1"
         "REC_TIME"    = "04052023080908"
@@ -253,8 +255,8 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         "PEAK_TXN_Q"        = "1"
         "PEAK_TPS"          = "0" 
         "PEAK_TPM"          = "5" 
-        "PEAK_TPH"          = "14"
-        "PEAK_TPD"          = "28"
+        "PEAK_TPH"          = "14"PC_EFT
+        "PEAK_TPD" = "28"
     }
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
@@ -263,7 +265,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\TXNLOG"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
-        "FILENAME" = "C:\\PC_EFT\\EXCLOG.TXT"
+        "FILENAME" = "C:\PC_EFT\EXCLOG.TXT"
     }
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
@@ -273,17 +275,8 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "INSTALLERVERSION"    = "5.6.8"
-        "INSTALLEDFILE"       = "C:\\PC_EFT\\EMSCLT.exe"
-        "EFTCLTINSTALLEDFILE" = "C:\\PC_EFT\\EftClnt.exe"
-    }
-    Foreach ( $item in $RegValues.GetEnumerator() ) {
-        $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
-    }
-
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run"
-    $RegValues = @{
-        "EftClntUI" = "C:\\PC_EFT\\EftClntUI.exe"
-        "EftsrvUI"  = "C:\\PC_EFT\\EftSrvUI.exe"
+        "INSTALLEDFILE"       = "C:\PC_EFT\EMSCLT.exe"
+        "EFTCLTINSTALLEDFILE" = "C:\PC_EFT\EftClnt.exe"
     }
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
@@ -311,7 +304,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\CLIENT"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
-        "INSTALL_DIR" = "C:\\PC_EFT\\"
+        "INSTALL_DIR" = "C:\PC_EFT\"
     }
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
@@ -378,7 +371,6 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     $null = New-Item -Path "$regkey" -Force
     $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\SHARED_DATA\IP_POS"
     $null = New-Item -Path "$regkey" -Force
-
     $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\PCEFTPOS_BRIDGE\TPP-GIVEX"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
@@ -403,8 +395,8 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{   
         "INSTALLERVERSION"    = "5.6.8"
-        "INSTALLEDFILE"       = "C:\\PC_EFT\\EMSCLT.exe"
-        "EFTCLTINSTALLEDFILE" = "C:\\PC_EFT\\EftClnt.exe"
+        "INSTALLEDFILE"       = "C:\PC_EFT\EMSCLT.exe"
+        "EFTCLTINSTALLEDFILE" = "C:\PC_EFT\EftClnt.exe"
     }
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
@@ -441,7 +433,6 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-
     $regkey = "HKLM:\SOFTWARE\WOW6432Node\PC-EFTPOS\LaneInfo"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{ 
@@ -455,6 +446,35 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     Foreach ( $item in $RegValues.GetEnumerator() ) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
+
+    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\PINPAD"
+    $null = New-Item -Path "$regkey" -Force
+    $RegValues = @{
+
+        "PORT"     = "COM5:"
+        "ACQUIRER" = "C"
+    }
+    Foreach ( $item in $RegValues.GetEnumerator() ) {
+        $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
+    }
+    $RegValues = @{
+
+        "LAST_COMMS_METHOD" = "1"
+        "LAST_BAUD_RATE"    = "9600"
+    }
+    Foreach ( $item in $RegValues.GetEnumerator() ) {
+        $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
+    }
+ 
+    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run"
+    $RegValues = @{
+        "EftClntUI" = "C:\PC_EFT\EftClntUI.exe"
+        "EftsrvUI"  = "C:\PC_EFT\EftSrvUI.exe"
+    }
+    Foreach ( $item in $RegValues.GetEnumerator() ) {
+        $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
+    }
+    \
     Start-Process -FilePath "$install_path\vc_redist.x86.exe" -ArgumentList "/install", "/passive", "/quiet", "/norestart"
     $null = New-NetFirewallRule -DisplayName "EFT-Server" -Direction Inbound -Program "$install_path\Eftsrv.exe" -Action Allow -Profile Any 
     Start-Process -FilePath "$install_path\Eftsrv.exe" -ArgumentList "install", "noecho"
@@ -465,8 +485,6 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     Start-Service -Name "EFT-SERVER"
     Start-Process -FilePath "$install_path\EftSrvUI.exe"
 
-
-    
     If ($env:computername -like "*POS*") {
         $null = New-NetFirewallRule -DisplayName "EMS-Client" -Direction Inbound -Program "$install_path\EmsClt.exe" -Action Allow -Profile Any
         $null = New-NetFirewallRule -DisplayName "EMS-ClientUI" -Direction Inbound -Program "$install_path\EmsCltUI.exe" -Action Allow -Profile Any 
@@ -477,18 +495,9 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         Start-Process -FilePath "$install_path\ConfigWiz.exe" -ArgumentList "/SilentInstall /StartEFTCLT"
         Start-Process -FilePath "$install_path\EftClntUI.exe"
     }
-
-    
+ 
     If ($env:computername -like "*POS*") {
         Copy-Item BCX\*.BCX C:\PC_EFT\
     }
-
-    
-
-
-
-
-
-    
-    
 }
+Stop-Transcript C:\Windows\Logs\linkly-install.ps1

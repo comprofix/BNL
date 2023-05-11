@@ -1,9 +1,12 @@
 Start-Transcript C:\Windows\Logs\linkly-install.Log
 
+#Set Variables
 $Hostname = $env:computername
+#Get Store Number
 $position = $Hostname.Indexof("B")
 $StoreNumberPC = $Hostname.Substring($position + 1, 4)
 
+#Get LaneID
 If ($hostname -like "*SVR*") {
     $position = $Hostname.Indexof("R")
 }
@@ -12,8 +15,8 @@ else {
 }
 $LaneID = $Hostname.Substring($position + 1, 2)
 
+#Get Linkly Creds from Sharepoint List and populate variables
 . "$PSScriptRoot/Connect-pnponline.ps1"
-
 $StoreNumber = ($data | Where-Object { $_.field_1 -eq "$StoreNumberPC" }).field_1
 $StoreName = ($data | Where-Object { $_.field_1 -eq "$StoreNumberPC" }).field_2
 $Merchant = ($data | Where-Object { $_.field_1 -eq "$StoreNumberPC" }).field_3
@@ -25,6 +28,7 @@ $Givex_Username = ($data | Where-Object { $_.field_1 -eq "$StoreNumberPC" }).fie
 $Givex_Password = ($data | Where-Object { $_.field_1 -eq "$StoreNumberPC" }).field_9
 $BOH = ($data | Where-Object { $_.field_1 -eq "$StoreNumberPC" }).field_10
 
+#Extract Archive and Install Linkly
 Write-Host "Installing Linkly"
 $install_path = "C:\PC_EFT"
 If (Test-Path -Path "$install_path") {
@@ -32,14 +36,16 @@ If (Test-Path -Path "$install_path") {
 }
 Expand-Archive -LiteralPath PC_EFT.zip -DestinationPath $install_path 
 
+#Create Registry Entries for Linkly Setup.
+
 Write-Host "Creating Registry Entries"
-If (Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy") {
-    $null = Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy" -Recurse -Force
+If (Test-Path -Path "HKLM:\SOFTWARE\Remedy") {
+    $null = Remove-Item -Path "HKLM:\SOFTWARE\Remedy" -Recurse -Force
 }
 
-If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
+If (!(Test-Path -Path "HKLM:\SOFTWARE\Remedy")) {
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\EVL"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\EVL"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "FILENAME" = "C:\PC_EFT\EFTSRV.LOG"
@@ -56,7 +62,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\EXCEPTIONS"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\EXCEPTIONS"
     $null = New-Item -Path "$regkey" -Force
     If ($env:computername -like "*SRV*") {
         $RegValues = @{
@@ -97,7 +103,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
     
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\LINE_0000"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\LINE_0000"
     $null = New-Item -Path "$regkey" -Force
 
     If ($env:computername -like "*SVR*") {
@@ -152,7 +158,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\LINE_0001"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\LINE_0001"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "NAME"         = "SY4 SERVER"
@@ -176,7 +182,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
     
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\LINE_0002"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\LINE_0002"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "NAME"         = "ME1 SERVER"
@@ -200,7 +206,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\LINK_0000"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\LINK_0000"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "NAME"      = "Default Link"
@@ -216,7 +222,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\ROUTE_0000"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\ROUTE_0000"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "HostID"       = "1"
@@ -237,7 +243,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
     
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\SERVER"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\SERVER"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "INETADDR"    = "ANY_IP"
@@ -263,7 +269,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
     
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Remedy\EFTSRV\TXNLOG"
+    $regkey = "HKLM:\SOFTWARE\Remedy\EFTSRV\TXNLOG"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "FILENAME" = "C:\PC_EFT\EXCLOG.TXT"
@@ -272,7 +278,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Ingenico\EMS\EMS-CLIENT"  
+    $regkey = "HKLM:\SOFTWARE\Ingenico\EMS\EMS-CLIENT"  
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "INSTALLERVERSION"    = "5.6.8"
@@ -283,7 +289,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\PCEFTPOS_BRIDGE\TPP-BLACKHAWK"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\PCEFTPOS_BRIDGE\TPP-BLACKHAWK"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "AID"      = "60300004958"
@@ -302,7 +308,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
     }
 
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\CLIENT"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\CLIENT"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "INSTALL_DIR" = "C:\PC_EFT\"
@@ -319,7 +325,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\DLLS\Connect"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\DLLS\Connect"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "REGISTRATION_ID"   = ""
@@ -333,7 +339,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "OCX_VERSION"          = "no OCX"
@@ -346,33 +352,33 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\AbnormalShutdown"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\AbnormalShutdown"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\ClientRestartedButPCDidNot"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\ClientRestartedButPCDidNot"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\EFTSRVclose"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\EFTSRVclose"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\EFTSRVconnect"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\EFTSRVconnect"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\NormalShutdown"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\NormalShutdown"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\GENERAL_STATS"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\BUCKET_STATS\GENERAL_STATS"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\GENERAL_STATS"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\GENERAL_STATS"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EMS\TEMP"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EMS\TEMP"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\EVL"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\EVL"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\HOST"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\HOST"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\JOURNAL"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\JOURNAL"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\RECEIPT"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\RECEIPT"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\SHARED_DATA\IP_POS"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\SHARED_DATA\IP_POS"
     $null = New-Item -Path "$regkey" -Force
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\PCEFTPOS_BRIDGE\TPP-GIVEX"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\PCEFTPOS_BRIDGE\TPP-GIVEX"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
         "LAST_TXN"       = ""
@@ -392,7 +398,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Ingenico\EMS\EMS-CLIENT"
+    $regkey = "HKLM:\SOFTWARE\Ingenico\EMS\EMS-CLIENT"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{   
         "INSTALLERVERSION"    = "5.6.8"
@@ -403,7 +409,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\PCEFTPOS_BRIDGE\TPP-ZIPMONEY"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\PCEFTPOS_BRIDGE\TPP-ZIPMONEY"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{   
         "API_KEY"     = "$API_ZIP"
@@ -420,7 +426,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\LANEINFO"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\LANEINFO"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{      
         "MerchantId"   = "BSTLSS"
@@ -434,7 +440,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\PC-EFTPOS\LaneInfo"
+    $regkey = "HKLM:\SOFTWARE\PC-EFTPOS\LaneInfo"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{ 
         "MerchantId"   = "BSTLSS"
@@ -448,7 +454,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value
     }
 
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\CullenSoftwareDesign\EFTCLIENT\PINPAD"
+    $regkey = "HKLM:\SOFTWARE\CullenSoftwareDesign\EFTCLIENT\PINPAD"
     $null = New-Item -Path "$regkey" -Force
     $RegValues = @{
 
@@ -467,7 +473,7 @@ If (!(Test-Path -Path "HKLM:\SOFTWARE\WOW6432Node\Remedy")) {
         $null = New-ItemProperty -Path "$regkey" -Name $item.Key -Value $item.Value -PropertyType dword
     }
  
-    $regkey = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run"
+    $regkey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
     $RegValues = @{
         "EftClntUI" = "C:\PC_EFT\EftClntUI.exe"
         "EftsrvUI"  = "C:\PC_EFT\EftSrvUI.exe"

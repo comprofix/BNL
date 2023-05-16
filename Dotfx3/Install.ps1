@@ -1,5 +1,3 @@
-# Based on - https://timmyit.com/2019/06/17/how-to-deploy-net-3-5-with-intune/
-
 Param(
     [Parameter(Mandatory = $true)]
     [ValidateSet("Install", "Uninstall")]
@@ -8,11 +6,20 @@ Param(
 )
  
 If ($Mode -eq "Install") {
-    #Online installer
-    Enable-WindowsOptionalFeature -Online -FeatureName 'NetFx3' -NoRestart
+    if (Test-path .\sxs\Microsoft-Windows-NetFx3-OnDemand-Package*.cab) {
+        #Offline Installer
+        Enable-WindowsOptionalFeature -Online -FeatureName 'NetFx3' -Source .\sxs\ -NoRestart -LimitAccess
+ 
+    }
+    else {
+        #Online installer
+        Enable-WindowsOptionalFeature -Online -FeatureName 'NetFx3' -NoRestart
+    }
+ 
 }
  
 If ($Mode -eq "Uninstall") {
  
     Disable-WindowsOptionalFeature -Online -FeatureName 'NetFx3' -Remove -NoRestart
+ 
 }
